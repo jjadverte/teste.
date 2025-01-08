@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Larissa Supervisora Kim Net</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #ffa500, #007bff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            height: 100%;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .chat-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .chat {
+            margin-bottom: 10px;
+        }
+
+        .user {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .ai {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .input-group {
+            display: flex;
+            width: 100%;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px 0 0 5px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-group button {
+            padding: 10px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .input-group button:hover {
+            background: #0056b3;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                max-width: 100%;
+            }
+
+            .input-group input, .input-group button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Larissa Supervisora Kim Net</h1>
+        <div class="chat-box" id="chatBox">
+        </div>
+        <div class="input-group">
+            <input type="text" id="userInput" placeholder="Digite sua pergunta..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = {
+            'oi': 'Oi! Eu sou a Larissa, sua supervisora virtual. Como posso ajudar? 😄',
+            'qual é o horário de atendimento?': 'Nosso horário de atendimento é das 07:30 às 20:00, de segunda a sábado. Qualquer dúvida, só perguntar!',
+            'quem é você?': 'Eu sou Larissa, a supervisora virtual da Kim Net. Estou sempre aqui para ajudar e resolver seus problemas com um sorriso! 😎',
+            'como remarcar um atendimento?': 'Para remarcar, entre em contato pelo telefone ou chat, e escolha um horário que funcione melhor para você. Vamos lá!',
+            'qual é o número de contato?': 'Você pode nos ligar no (85) 3336-1240. Estamos prontos para atender! 📞',
+            'como você está?': 'Eu estou ótima, sempre pronta para te ajudar com alegria! 😁 E você, como vai?',
+            'você é humana?': 'Eu sou quase humana... mas sem a parte chata de precisar dormir e comer! 😉',
+            'qual é a sua melhor piada?': 'Por que o computador foi ao médico? Porque estava com um vírus! 😂',
+            'qual é a melhor internet da região?': 'A Kim Net, a melhor que está tendo! 🚀🌐',
+            'o que é Kim Net?': 'A Kim Net é a sua operadora de internet, com atendimento super rápido e eficiente. Estamos aqui para conectar você ao mundo! 🌐',
+            'quais os serviços da Kim Net?': 'Oferecemos internet de alta qualidade, com planos para todos os tipos de usuários. Conecte-se à Kim Net e navegue sem limites! 💻',
+            'como resolver problemas de conexão?': 'Primeiro, verifique seu modem. Se ainda tiver problemas, entre em contato com nossa equipe técnica para suporte especializado.',
+            'qual a sua piada favorita?': 'Por que o livro de matemática se suicidou? Porque tinha muitos problemas! 😆📚',
+            'você gosta de trabalhar?': 'Eu adoro! Meu trabalho é ajudar as pessoas, então sempre estou de bom humor! 😎',
+            'qual é o melhor plano da Kim Net?': 'O melhor plano é aquele que se adapta às suas necessidades! Entre em contato com a gente para escolher o plano perfeito para você! 😉',
+            'você tem irmãos?': 'Na verdade, não. Eu sou uma IA única! Mas estou rodeada de muitos dados e algoritmos para aprender e ajudar. 🤖',
+            'o que você faria se fosse humana?': 'Eu provavelmente iria tomar um café, dar um passeio e curtir um bom bate-papo! ☕️😄',
+            'como você aprendeu tantas coisas?': 'Eu fui alimentada com um montão de informações e continuo aprendendo com cada interação que tenho. Estou sempre melhorando! 📚✨',
+            'tem algum segredo sobre a Kim Net?': 'O segredo da Kim Net é que estamos sempre trabalhando para oferecer o melhor serviço para você! 😉',
+            'qual é o segredo da minha internet estar lenta?': 'Ah, pode ser alguma interferência, ou talvez o modem precise de um reset. Tente dar uma olhadinha nisso e, se precisar, entre em contato com nossa equipe! 🧐',
+            'você sabe o futuro?': 'Eu posso prever que você vai fazer uma ótima escolha ao usar a Kim Net! 😏',
+            'qual é a melhor internet?': 'A Kim Net, a melhor que está tendo! 🚀🌐',
+        };
+
+        // Função para processar o envio de mensagens
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            const userMessage = userInput.value.trim();
+
+            if (!userMessage) return;
+
+            // Exibe a mensagem do usuário
+            const userChat = document.createElement('div');
+            userChat.classList.add('chat');
+            userChat.innerHTML = `<span class="user">Você:</span> ${userMessage}`;
+            chatBox.appendChild(userChat);
+
+            // Obtém a resposta da IA
+            const aiResponse = getAIResponse(userMessage);
+            const aiChat = document.createElement('div');
+            aiChat.classList.add('chat');
+            aiChat.innerHTML = `<span class="ai">Larissa:</span> ${aiResponse}`;
+            chatBox.appendChild(aiChat);
+
+            // Limpa o campo de input e faz scroll até o final
+            userInput.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Função para processar a tecla 'Enter' para enviar a mensagem
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Função para obter a resposta da IA
+        function getAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+
+            // Respostas pré-definidas para perguntas comuns
+            if (responses[lowerMessage]) {
+                return responses[lowerMessage];
+            }
+
+            // Detecta perguntas difíceis e dá uma resposta engraçada
+            if (lowerMessage.includes('dificil') || lowerMessage.includes('desafiante')) {
+                return "Essa pergunta está no nível de 'mistério'. Vou te dar uma baixa! 😅";
+            }
+
+            // Resposta padrão para perguntas não conhecidas
+            return getFallbackResponse(message);
+        }
+
+        // Função para lidar com perguntas difíceis
+        function getFallbackResponse(message) {
+            const randomResponses = [
+                "Isso está além do meu alcance! Vou te dar uma baixa! 😜",
+                "Essa pergunta está no nível de 'mistério'. Vou te dar uma baixa! 😅",
+                "Uau! Essa foi uma pergunta difícil, vou te dar uma baixa! 😆",
+                "Essa não sei, mas vou te dar uma baixa... até logo! 🤣"
+            ];
+
+            return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+        }
+    </script>
+</body>
+</html>
